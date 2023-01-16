@@ -1,4 +1,9 @@
-import { Form, useActionData, useTransition } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useParams,
+  useTransition,
+} from "@remix-run/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { createPost } from "~/models/post.server";
@@ -12,12 +17,15 @@ type ActionData =
 const inputClassName =
   "w-full rounded border border-gray-500 px-2 py-1 text-lg";
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({ request, params }) => {
   await requireAdminUser(request);
-  return json({});
+  if (params.slug === "new") {
+    return json({});
+  }
+  return json({ post: null });
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
   await requireAdminUser(request);
 
   // return new Response(null, {
@@ -57,7 +65,11 @@ export const action: ActionFunction = async ({ request }) => {
   invariant(typeof slug === "string", "slug must be a string");
   invariant(typeof markdown === "string", "markdown must be a string");
 
-  await createPost({ title, slug, markdown });
+  if (params.slug === "new") {
+    await createPost({ title, slug, markdown });
+  } else {
+    // TODO: update post
+  }
   return redirect("/posts/admin");
 };
 
