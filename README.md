@@ -115,6 +115,12 @@ Prior to your first deployment, you'll need to do a few things:
 
   If you don't have openssl installed, you can also use [1password](https://1password.com/password-generator/) to generate a random secret, just replace `$(openssl rand -hex 32)` with the generated secret.
 
+**Brandon added** this step for setting the fly secret for the admin email.
+
+```
+fly secrets set ADMIN_EMAIL=kishba@gmail.com
+```
+
 - Create a persistent volume for the sqlite database for both your staging and production environments. Run the following:
 
   ```sh
