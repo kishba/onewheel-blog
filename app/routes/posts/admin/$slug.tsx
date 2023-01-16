@@ -15,6 +15,9 @@ import {
 } from "~/models/post.server";
 import invariant from "tiny-invariant";
 import { requireAdminUser } from "~/session.server";
+import type { Post } from "~/models/post.server";
+
+type LoaderData = { post?: Post };
 
 type ActionData =
   | { title: null | string; slug: null | string; markdown: null | string }
@@ -25,15 +28,18 @@ const inputClassName =
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   await requireAdminUser(request);
+  invariant(params.slug, "slug is required");
   if (params.slug === "new") {
-    return json({});
+    return json<LoaderData>({});
   }
   const post = await getPost(params.slug);
-  return json({ post });
+  // TODO Handle 404 to prevent typescript complaining about post here
+  return json<LoaderData>({ post });
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
   await requireAdminUser(request);
+  invariant(params.slug, "slug is required");
 
   // return new Response(null, {
   //   status: 302,
@@ -87,7 +93,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function NewPostRoute() {
-  const data = useLoaderData();
+  const data = useLoaderData() as LoaderData;
   // Kent in eggheadio
   const errors = useActionData() as ActionData;
   // const data = useActionData();
