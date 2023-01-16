@@ -1,4 +1,4 @@
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useTransition } from "@remix-run/react";
 import type { ActionFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { createPost } from "~/models/post.server";
@@ -59,6 +59,14 @@ export default function NewPostRoute() {
   // const data = useActionData();
   // Brandon considering sending more back in the paylod
   // const { errors } = data || {};
+
+  const transition = useTransition();
+  // Cool there can be so many transitions happening on a page!
+  // you can check what transition is going on, but let's assume one
+  // transition.submission?.formData
+  // transition.submission?.action
+  const isCreating = Boolean(transition.submission);
+
   return (
     <Form action="/posts/admin/new" method="post">
       <p>
@@ -97,8 +105,9 @@ export default function NewPostRoute() {
         <button
           type="submit"
           className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-300"
+          disabled={isCreating}
         >
-          Create Post
+          {isCreating ? "Creating..." : "Create Post"}
         </button>
       </p>
     </Form>
