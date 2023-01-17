@@ -5,7 +5,7 @@ import { getPostListings } from "~/models/post.server";
 import { useOptionalAdminUser, useOptionalUser } from "~/utils";
 
 type LoaderData = {
-  posts: Awaited<ReturnType<typeof getPosts>>;
+  posts: Awaited<ReturnType<typeof getPostListings>>;
 };
 
 export const loader: LoaderFunction = async () => {
